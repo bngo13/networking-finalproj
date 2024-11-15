@@ -16,43 +16,44 @@ class Graph:
         self.size = size
         self.vertex_data = [''] * size
 
-    def add_edge(self, u, v, weight):
-        if 0 <= u < self.size and 0 <= v < self.size:
-            self.adj_matrix[u][v] = Edge(weight)
-            self.adj_matrix[v][u] = Edge(weight)
+    def add_edge(self, currentNode, neighborNode, cost):
+        if 0 <= currentNode < self.size and 0 <= neighborNode < self.size:
+            self.adj_matrix[currentNode][neighborNode] = Edge(cost)
+            self.adj_matrix[neighborNode][currentNode] = Edge(cost)
 
     def add_vertex_data(self, vertex, data):
         if 0 <= vertex < self.size:
             self.vertex_data[vertex] = data
 
-    def dijkstra(self, start_vertex_data):
-        start_vertex = self.vertex_data.index(start_vertex_data)
+    def dijkstra(self, startNodeIndex):
+        startNode = self.vertex_data.index(startNodeIndex)
         distances = [float('inf')] * self.size
         predecessors = [None] * self.size
-        distances[start_vertex] = 0
+        distances[startNode] = 0
         visited = [False] * self.size
 
         for _ in range(self.size):
             min_distance = float('inf')
-            u = None
+            currentNode = None
             for i in range(self.size):
                 if not visited[i] and distances[i] < min_distance:
                     min_distance = distances[i]
-                    u = i
+                    currentNode = i
 
-            if u is None:
+            if currentNode is None:
                 break
 
-            visited[u] = True
+            visited[currentNode] = True
 
-            for v in range(self.size):
-                if self.adj_matrix[u][v].getWeight() != 0 and not visited[v]:
-                    alt = distances[u] + self.adj_matrix[u][v].getWeight()
-                    if alt < distances[v]:
-                        distances[v] = alt
-                        predecessors[v] = u
-        
+            for neighborNode in range(self.size):
+                if self.adj_matrix[currentNode][neighborNode].getWeight() != 0 and not visited[neighborNode]:
+                    alternativeDistance = distances[currentNode] + self.adj_matrix[currentNode][neighborNode].getWeight()
+                    if alternativeDistance < distances[neighborNode]:
+                        distances[neighborNode] = alternativeDistance
+                        predecessors[neighborNode] = currentNode
+
         return distances, predecessors
+
     def get_path(self, predecessors, start_vertex, end_vertex):
         path = []
         current = self.vertex_data.index(end_vertex)
