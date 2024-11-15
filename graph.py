@@ -8,6 +8,12 @@ class Edge:
             return float('inf')
 
         return self.weight
+    
+    def setDown(self):
+        self.isUp = False
+    
+    def setUp(self):
+        self.isUp = True
 
 class Graph:
     # Inspired by https://www.w3schools.com/dsa/dsa_algo_graphs_dijkstra.php
@@ -16,10 +22,19 @@ class Graph:
         self.size = size
         self.vertex_data = [''] * size
 
+    def down_node(self, node):
+        for neighbors in self.adj_matrix[node]:
+            neighbors.setDown()
+    
+    def restore_node(self, node):
+        for neighbors in self.adj_matrix[node]:
+            neighbors.setUp()
+
     def add_edge(self, currentNode, neighborNode, cost):
         if 0 <= currentNode < self.size and 0 <= neighborNode < self.size:
-            self.adj_matrix[currentNode][neighborNode] = Edge(cost)
-            self.adj_matrix[neighborNode][currentNode] = Edge(cost)
+            edge = Edge(cost)
+            self.adj_matrix[currentNode][neighborNode] = edge
+            self.adj_matrix[neighborNode][currentNode] = edge
 
     def add_vertex_data(self, vertex, data):
         if 0 <= vertex < self.size:
@@ -88,6 +103,7 @@ g.add_edge(4, 5, 2)  # Y -> Z 2
 # Dijkstra's algorithm from D to all vertices
 print("Dijkstra's Algorithm starting from vertex D:\n")
 distances, predecessors = g.dijkstra('U')
+print(distances)
 for i, d in enumerate(distances):
     print(f"Shortest distance from U to {g.vertex_data[i]}: {d}")
     path = g.get_path(predecessors, 'U', g.vertex_data[i])
