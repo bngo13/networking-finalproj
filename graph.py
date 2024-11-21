@@ -1,3 +1,28 @@
+vertexMap = {}
+
+def fileParser(fileName):
+    f = open(fileName, "r")
+
+    count = 0
+    graphSize = (len(f.readlines()))
+    userGraph = Graph(graphSize)
+    f.seek(0)
+    for line in f:
+        nodeData = line.split(" ")
+        vertexMap[nodeData[0]] = count
+        userGraph.add_vertex_data(count, nodeData[0])
+        count += 1
+    f.seek(0)
+    for line in f:
+        nodeData = line.strip().split(" ")
+        for edge in nodeData[1:]:
+            edgeCost = edge.split("-")
+            userGraph.add_edge(vertexMap[nodeData[0]], vertexMap[edgeCost[0]], int(edgeCost[1]))
+    f.seek(0)
+    print(vertexMap)
+    return userGraph
+
+
 class Edge:
     def __init__(self, weight):
         self.isUp = True
@@ -80,31 +105,28 @@ class Graph:
                 break
         return '->'.join(path)  # Join the vertices with '->'
 
-g = Graph(6)
+def menu():
+    choice = input("Do you want to setup your own graph or use the default one (setup or default)? ")
+    if choice == "default":
+        g = fileParser("default_input.txt")
+    else:
+        fileName = input("Enter file with the chosen graph: ")
+        g = fileParser(fileName)
+    
+    sourceNode = input("What will be the source node? ")
+    destinationNode = input("what will be the destination node? ")
 
-g.add_vertex_data(0, 'U')
-g.add_vertex_data(1, 'V')
-g.add_vertex_data(2, 'X')
-g.add_vertex_data(3, 'W')
-g.add_vertex_data(4, 'Y')
-g.add_vertex_data(5, 'Z')
+    while True:
+        print("Calculating paths...")
+        # Dijkstra's algorithm from D to all vertices
+        print("Dijkstra's Algorithm starting from vertex D:\n")
+        distances, predecessors = g.dijkstra(sourceNode)
+        print(distances)
+        for i, d in enumerate(distances):
+            print(f"Shortest distance from U to {g.vertex_data[i]}: {d}")
+            path = g.get_path(predecessors, 'U', g.vertex_data[i])
+            print(path)
+        
 
-g.add_edge(0, 1, 2)  # U -> V 2
-g.add_edge(0, 2, 1)  # U -> X 1
-g.add_edge(0, 3, 5)  # U -> W 5
-g.add_edge(1, 2, 2)  # V -> X 2
-g.add_edge(1, 3, 3)  # V -> W 3
-g.add_edge(2, 3, 3)  # X -> W 3
-g.add_edge(2, 4, 1)  # X -> Y 1
-g.add_edge(3, 4, 1)  # W -> Y 1
-g.add_edge(3, 5, 5)  # W -> Z 5
-g.add_edge(4, 5, 2)  # Y -> Z 2
+   
 
-# Dijkstra's algorithm from D to all vertices
-print("Dijkstra's Algorithm starting from vertex D:\n")
-distances, predecessors = g.dijkstra('U')
-print(distances)
-for i, d in enumerate(distances):
-    print(f"Shortest distance from U to {g.vertex_data[i]}: {d}")
-    path = g.get_path(predecessors, 'U', g.vertex_data[i])
-    print(path)
