@@ -1,4 +1,4 @@
-vertexMap = {}
+vertexMap = {} # map that keeps all vertices and enumerate them
 
 def fileParser(fileName):
     """
@@ -30,7 +30,6 @@ def fileParser(fileName):
             edgeCost = edge.split("-")
             userGraph.add_edge(vertexMap[nodeData[0]], vertexMap[edgeCost[0]], int(edgeCost[1]))
 
-    print(vertexMap)  # Debug: Print vertex map
     return userGraph
 
 class Edge:
@@ -192,10 +191,10 @@ def menu():
     """
     Display a menu for the user to interact with the graph and perform operations.
     """
-    choice = input("Do you want to setup your own graph or use the default one (setup or default)? ")
+    choice = input("Do you want to use your own graph or use the default one (own or default)? ")
     if choice == "default":
         g = fileParser("default_input.txt")
-    elif choice == "setup":
+    elif choice == "own":
         fileName = input("Enter file with the chosen graph: ")
         g = fileParser(fileName)
     else:
