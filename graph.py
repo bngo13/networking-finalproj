@@ -179,6 +179,7 @@ class Graph:
         """
         path = []
         current = vertexMap[end_vertex]
+        # Go backwards from destination node to start node to construct the path
         while current is not None:
             path.insert(0, self.vertex_data[current])
             current = predecessors[current]
@@ -212,24 +213,32 @@ def menu():
     while True:
         actionChoice = input("(a) Find shortest path\n(b) Down a node\n(c) Restore a node\n(q) Exit\nChoice: ")
         print()
-        if actionChoice == "a":
-            distances, predecessors = g.dijkstra(vertexMap[sourceNode])
-            print(f"Shortest distance from {sourceNode} to {destinationNode} is: {distances[vertexMap[destinationNode]]}")
-            print(f"Path from {sourceNode} to {destinationNode}: {g.get_path(predecessors, sourceNode, destinationNode)}\n")
-        elif actionChoice == "b":
-            downNodeChoice = input("Which node do you want to down? ")
-            while downNodeChoice not in vertexMap:
-                downNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to down? ")
-            g.down_node(vertexMap[downNodeChoice])
-        elif actionChoice == "c":
-            restoreNodeChoice = input("Which node do you want to restore? ")
-            while restoreNodeChoice not in vertexMap:
-                restoreNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to restore? ")
-            g.restore_node(vertexMap[restoreNodeChoice])
-        elif actionChoice == "q":
-            print("Exiting the program...")
-            break
-        else:
-            print("Invalid Input! Please try again.")
+        match actionChoice:
+            case "a":
+                distances, predecessors = g.dijkstra(vertexMap[sourceNode])
+                pathCost = distances[vertexMap[destinationNode]]
+
+                # Only show the path if it is reachable
+                if pathCost == float('inf'):
+                    print(f"{sourceNode} to {destinationNode} is unreachable. Cost is: {pathCost}\n")
+                    continue
+
+                print(f"Shortest distance from {sourceNode} to {destinationNode} is: {pathCost}")
+                print(f"Path from {sourceNode} to {destinationNode}: {g.get_path(predecessors, sourceNode, destinationNode)}\n")
+            case "b":
+                downNodeChoice = input("Which node do you want to down? ")
+                while downNodeChoice not in vertexMap:
+                    downNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to down? ")
+                g.down_node(vertexMap[downNodeChoice])
+            case "c":
+                restoreNodeChoice = input("Which node do you want to restore? ")
+                while restoreNodeChoice not in vertexMap:
+                    restoreNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to restore? ")
+                g.restore_node(vertexMap[restoreNodeChoice])
+            case "q":
+                print("Exiting the program...")
+                break
+            case _:
+                print("Invalid Input! Please try again.")
         
 menu()
