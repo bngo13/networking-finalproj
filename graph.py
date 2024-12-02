@@ -83,6 +83,7 @@ class Graph:
         self.adj_matrix = [[Edge(0)] * size for _ in range(size)]
         self.size = size
         self.vertex_data = [''] * size
+        self.downed_nodes = []
 
     def down_node(self, node):
         """
@@ -91,6 +92,7 @@ class Graph:
         Args:
             node (int): The index of the node to disable.
         """
+        self.downed_nodes.append(node)
         for neighbors in self.adj_matrix[node]:
             neighbors.setDown()
     
@@ -101,6 +103,8 @@ class Graph:
         Args:
             node (int): The index of the node to enable.
         """
+        if node in self.downed_nodes:
+            self.downed_nodes.remove(node)
         for neighbors in self.adj_matrix[node]:
             neighbors.setUp()
 
@@ -215,6 +219,7 @@ class Graph:
             "edgecolors": "black",
             "linewidths": 5,
             "width": 5,
+            "node_color": "white",
         }
 
         for i in range(self.size):
@@ -232,9 +237,16 @@ class Graph:
                 G,
                 pos,
                 edgelist=pathEdges,
-                edge_color='red',
+                edge_color='green',
                 width=10,
             )
+            
+        colorNodes = [
+        "red" if i in self.downed_nodes else "white"  # Red for downed nodes
+        for i in range(self.size)
+        ]
+        options["node_color"] = colorNodes  # Add node color to the options dictionary
+
 
         nx.draw(G, pos, with_labels=True, **options)
         
@@ -242,7 +254,7 @@ class Graph:
         for key, value in pos.items():
             # Shifts the position of the labels
             label_pos[key] = (value[0], value[1] + 0.05)
-
+        
         nx.draw_networkx_edge_labels(G, label_pos, edge_labels=labels, font_size=12, font_color="black")
         
         plt.show()
