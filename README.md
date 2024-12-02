@@ -1,8 +1,12 @@
 # Networking Final Project
 
 ## Dependencies
-networkx
-can be installed by using '$ pip install networkx[default]'
+
+Dependencies can be installed by running '$ pip install -r requirements.txt'
+
+List of requirements:
+1. networkx[default]
+2. PyQT6
 
 ## Usage
 
