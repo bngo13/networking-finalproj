@@ -1,5 +1,13 @@
 # Networking Final Project
 
+## Dependencies
+
+Dependencies can be installed by running '$ pip install -r requirements.txt'
+
+List of requirements:
+1. networkx[default]
+2. PyQT6
+
 ## Usage
 
 python3 graph.py

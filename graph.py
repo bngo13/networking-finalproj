@@ -1,3 +1,7 @@
+# dependencies
+import networkx as nx
+import matplotlib.pyplot as plt
+
 vertexMap = {} # map that keeps all vertices and enumerate them
 
 def fileParser(fileName):
@@ -79,6 +83,7 @@ class Graph:
         self.adj_matrix = [[Edge(0)] * size for _ in range(size)]
         self.size = size
         self.vertex_data = [''] * size
+        self.downed_nodes = []
 
     def down_node(self, node):
         """
@@ -87,6 +92,7 @@ class Graph:
         Args:
             node (int): The index of the node to disable.
         """
+        self.downed_nodes.append(node)
         for neighbors in self.adj_matrix[node]:
             neighbors.setDown()
     
@@ -97,6 +103,8 @@ class Graph:
         Args:
             node (int): The index of the node to enable.
         """
+        if node in self.downed_nodes:
+            self.downed_nodes.remove(node)
         for neighbors in self.adj_matrix[node]:
             neighbors.setUp()
 
@@ -176,17 +184,80 @@ class Graph:
 
         Returns:
             str: The shortest path as a string of vertex names.
+            list: A list of edges in the shortest path.
         """
         path = []
+        path_edges = []
         current = vertexMap[end_vertex]
         # Go backwards from destination node to start node to construct the path
         while current is not None:
             path.insert(0, self.vertex_data[current])
+            if current != vertexMap[end_vertex]:
+                path_edges.insert(0, (self.vertex_data[predecessors[current]], self.vertex_data[current]))  # Add edge to path_edges
             current = predecessors[current]
             if current == vertexMap[start_vertex]:
                 path.insert(0, start_vertex)
                 break
-        return '->'.join(path)
+            
+        if path:
+            path_edges.insert(0, (path[-2], path[-1]))  # Add the final edge from the last node to destination
+        
+        return '->'.join(path), path_edges
+    
+    def drawGraph(self, pathEdges=None):
+        """
+        Draw the graph using the networkx library, with optional highlighting for edges.
+
+        Args:
+            pathEdges (list): A list of edges (tuples) to highlight.
+        """
+        G = nx.Graph()
+        options = {
+            "font_size": 36,
+            "node_size": 3000,
+            "node_color": "white",
+            "edgecolors": "black",
+            "linewidths": 5,
+            "width": 5,
+            "node_color": "white",
+        }
+
+        for i in range(self.size):
+            G.add_node(self.vertex_data[i])
+            for j in range(self.size):
+                if self.adj_matrix[i][j].weight != 0:
+                    G.add_edge(self.vertex_data[i], self.vertex_data[j], weight=self.adj_matrix[i][j].weight)
+
+        pos = nx.spring_layout(G)
+        labels = nx.get_edge_attributes(G, 'weight')
+
+        # Draw the highlighted edges of the best path
+        if pathEdges:
+            nx.draw_networkx_edges(
+                G,
+                pos,
+                edgelist=pathEdges,
+                edge_color='green',
+                width=10,
+            )
+            
+        colorNodes = [
+        "red" if i in self.downed_nodes else "white"  # Red for downed nodes
+        for i in range(self.size)
+        ]
+        options["node_color"] = colorNodes  # Add node color to the options dictionary
+
+
+        nx.draw(G, pos, with_labels=True, **options)
+        
+        label_pos = {}
+        for key, value in pos.items():
+            # Shifts the position of the labels
+            label_pos[key] = (value[0], value[1] + 0.05)
+        
+        nx.draw_networkx_edge_labels(G, label_pos, edge_labels=labels, font_size=12, font_color="black")
+        
+        plt.show()
 
 def menu():
     """
@@ -224,7 +295,10 @@ def menu():
                     continue
 
                 print(f"Shortest distance from {sourceNode} to {destinationNode} is: {pathCost}")
-                print(f"Path from {sourceNode} to {destinationNode}: {g.get_path(predecessors, sourceNode, destinationNode)}\n")
+                pathString, pathEdges = g.get_path(predecessors, sourceNode, destinationNode)
+                print(f"Path from {sourceNode} to {destinationNode}: {pathString}\n")
+                g.drawGraph(pathEdges)
+
             case "b":
                 downNodeChoice = input("Which node do you want to down? ")
                 while downNodeChoice not in vertexMap:
