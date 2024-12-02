@@ -1,5 +1,9 @@
 # Networking Final Project
 
+## Dependencies
+networkx
+can be installed by using '$ pip install networkx[default]'
+
 ## Usage
 
 python3 graph.py
