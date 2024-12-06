@@ -3,10 +3,12 @@
 ## Dependencies
 
 Dependencies can be installed by running either:
-- `pip install -r requirements.txt`
-- `pip3 install -r requirements.txt`
 
-List of requirements:
+-   `pip install -r requirements.txt`
+-   `pip3 install -r requirements.txt`
+
+List of requirements that will be installed after running the above command:
+
 1. networkx[default]
 2. PyQT6
 

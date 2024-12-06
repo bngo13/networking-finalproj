@@ -273,6 +273,10 @@ def menu():
         print("Invalid Input! Using the default graph for now")
         g = fileParser("default_input.txt")
     
+    print()
+    print(f"Available nodes: {list(vertexMap.keys())}")
+    print()
+
     sourceNode = input("Choose a source node? ")
     while sourceNode not in vertexMap:
         sourceNode = input("Invalid Node!\nChoose a source node? ")
@@ -280,8 +284,9 @@ def menu():
     destinationNode = input("Choose a destination node? ")
     while destinationNode not in vertexMap:
         destinationNode = input("Invalid Node!\nChoose a destination node? ")
-
+    print()
     while True:
+        print("Options:")
         actionChoice = input("(a) Find shortest path\n(b) Down a node\n(c) Restore a node\n(q) Exit\nChoice: ")
         print()
         if actionChoice == "a":
@@ -302,11 +307,13 @@ def menu():
             while downNodeChoice not in vertexMap:
                 downNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to down? ")
             g.down_node(vertexMap[downNodeChoice])
+            print()
         elif actionChoice == "c":
             restoreNodeChoice = input("Which node do you want to restore? ")
             while restoreNodeChoice not in vertexMap:
                 restoreNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to restore? ")
             g.restore_node(vertexMap[restoreNodeChoice])
+            print()
         elif actionChoice == "q":
             print("Exiting the program...")
             break
