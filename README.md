@@ -2,7 +2,9 @@
 
 ## Dependencies
 
-Dependencies can be installed by running '$ pip install -r requirements.txt'
+Dependencies can be installed by running either:
+- `pip install -r requirements.txt`
+- `pip3 install -r requirements.txt`
 
 List of requirements:
 1. networkx[default]

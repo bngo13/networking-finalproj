@@ -284,35 +284,34 @@ def menu():
     while True:
         actionChoice = input("(a) Find shortest path\n(b) Down a node\n(c) Restore a node\n(q) Exit\nChoice: ")
         print()
-        match actionChoice:
-            case "a":
-                distances, predecessors = g.dijkstra(vertexMap[sourceNode])
-                pathCost = distances[vertexMap[destinationNode]]
+        if actionChoice == "a":
+            distances, predecessors = g.dijkstra(vertexMap[sourceNode])
+            pathCost = distances[vertexMap[destinationNode]]
 
-                # Only show the path if it is reachable
-                if pathCost == float('inf'):
-                    print(f"{sourceNode} to {destinationNode} is unreachable. Cost is: {pathCost}\n")
-                    continue
+            # Only show the path if it is reachable
+            if pathCost == float('inf'):
+                print(f"{sourceNode} to {destinationNode} is unreachable. Cost is: {pathCost}\n")
+                continue
 
-                print(f"Shortest distance from {sourceNode} to {destinationNode} is: {pathCost}")
-                pathString, pathEdges = g.get_path(predecessors, sourceNode, destinationNode)
-                print(f"Path from {sourceNode} to {destinationNode}: {pathString}\n")
-                g.drawGraph(pathEdges)
+            print(f"Shortest distance from {sourceNode} to {destinationNode} is: {pathCost}")
+            pathString, pathEdges = g.get_path(predecessors, sourceNode, destinationNode)
+            print(f"Path from {sourceNode} to {destinationNode}: {pathString}\n")
+            g.drawGraph(pathEdges)
+        elif actionChoice == "b":
+            downNodeChoice = input("Which node do you want to down? ")
+            while downNodeChoice not in vertexMap:
+                downNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to down? ")
+            g.down_node(vertexMap[downNodeChoice])
+        elif actionChoice == "c":
+            restoreNodeChoice = input("Which node do you want to restore? ")
+            while restoreNodeChoice not in vertexMap:
+                restoreNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to restore? ")
+            g.restore_node(vertexMap[restoreNodeChoice])
+        elif actionChoice == "q":
+            print("Exiting the program...")
+            break
+        else:
+            print("Invalid Input! Please try again.")
 
-            case "b":
-                downNodeChoice = input("Which node do you want to down? ")
-                while downNodeChoice not in vertexMap:
-                    downNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to down? ")
-                g.down_node(vertexMap[downNodeChoice])
-            case "c":
-                restoreNodeChoice = input("Which node do you want to restore? ")
-                while restoreNodeChoice not in vertexMap:
-                    restoreNodeChoice = input("Invalid node! Please enter existing node\nWhich node do you want to restore? ")
-                g.restore_node(vertexMap[restoreNodeChoice])
-            case "q":
-                print("Exiting the program...")
-                break
-            case _:
-                print("Invalid Input! Please try again.")
         
 menu()
